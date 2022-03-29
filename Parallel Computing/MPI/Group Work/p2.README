@@ -1,0 +1,15 @@
+AUTHORS:
+   tmleibe2 Trevor M Leibert
+   bjlayko Benjamin J Layko
+   pjhamb  Palash Jhamb
+
+We chose to plot sin(x) over 10 million datapoints.
+The speedup from using parallelism over sequential processing was not very apparent until reaching
+a dataset size of about 10 million entries. This can be explained by the overhead imposed by communication
+between processes.
+It was interesting to see how much more efficent the MPI_Gather function was than our manual gather.
+Non-blocking operations proved far superior to blocking operations when gathering results at the end.
+
+It was surprising that 6 nodes seemed to be more efficent than 8 nodes, but again this would be explained
+by the cost of communication. Both the diminishing returns on accuracy and the overhead costs of communication would
+lead us to try to find an optimal balance of parallelism and to recognize that increased parallelism does not always mean better performance.

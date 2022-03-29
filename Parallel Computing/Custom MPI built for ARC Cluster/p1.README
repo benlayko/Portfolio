@@ -1,0 +1,14 @@
+The custom MPI library tended to be much slower on the small send sizes (taking about 4 times as long), but
+the longer messages actually did faster than their original MPI counterparts by a slight amount. This amount was around .001 seconds 
+so this change in speed is negligible, but it is intresting that the custom MPI got close to the actual library.
+The difference between short and long message times most likely indicates that the way I implemented the sockets
+took more time to set up connections than MPI, but transmitted the data more quickly. I also originally
+had issues implemnting the code in such a way that it would not deadlock above two nodes, but figured out a way to ensure that 
+my barrier function would not interfere with my sends and recieves.
+
+With more testing it seems that it takes a while for my MPI_Barrier function to finish, but overall the send
+and recieves still get through rather quickly.
+
+To run the program:
+
+./my_prun ./my_rtt

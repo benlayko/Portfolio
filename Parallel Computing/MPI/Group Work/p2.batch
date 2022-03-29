@@ -1,0 +1,25 @@
+#! /bin/bash
+
+echo "Running 1 nodes"
+mpirun -np 1 ./p2 10000000 > resultsSerial100Slices.txt
+echo "Running 2 nodes with 10000000 Slices"
+mpirun -np 2 ./p2_mpi 10000000 0 0 > results2Nodes00.txt
+mpirun -np 2 ./p2_mpi 10000000 0 1 > results2Nodes01.txt
+mpirun -np 2 ./p2_mpi 10000000 1 0 > results2Nodes10.txt
+mpirun -np 2 ./p2_mpi 10000000 1 1 > results2Nodes11.txt
+echo "Running 4 nodes with 10000000 Slices"
+mpirun -np 4 ./p2_mpi 10000000 0 0 > results4Nodes00.txt
+mpirun -np 4 ./p2_mpi 10000000 0 1 > results4Nodes01.txt
+mpirun -np 4 ./p2_mpi 10000000 1 0 > results4Nodes10.txt
+mpirun -np 4 ./p2_mpi 10000000 1 1 > results4Nodes11.txt
+echo "Running 6 nodes with 10000000 Slices"
+mpirun -np 6 ./p2_mpi 10000000 0 0 > results6Nodes00.txt
+mpirun -np 6 ./p2_mpi 10000000 0 1 > results6Nodes01.txt
+mpirun -np 6 ./p2_mpi 10000000 1 0 > results6Nodes10.txt
+mpirun -np 6 ./p2_mpi 10000000 1 1 > results6Nodes11.txt
+echo "Running 8 nodes with 10000000 Slices"
+mpirun -np 8 ./p2_mpi 10000000 0 0 > results8Nodes00.txt
+mpirun -np 8 ./p2_mpi 10000000 0 1 > results8Nodes01.txt
+mpirun -np 8 ./p2_mpi 10000000 1 0 > results8Nodes10.txt
+mpirun -np 8 ./p2_mpi 10000000 1 1 > results8Nodes11.txt
+echo "Complete"

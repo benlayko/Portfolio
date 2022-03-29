@@ -1,0 +1,55 @@
+AUTHORS:
+  tmleibe2 Trevor M Leibert
+  bjlayko Benjamin J Layko
+  pjhamb  Palash Jhamb
+
+5-Point v. 9-Point:
+The difference between the 5-point and 9-point calculation was marginal. The time it took to run all the calcuations
+were about the same, but as the instructions pointed out the 9-point stencil evolved more quickly. Because of this it is
+possible that the 9-point calculation could have actually taken less time to get to the same spot. This is because
+the calculation for 1.0 takes about the same amount of time regardless of the number of neighbors being taken into account 
+and the fact that the 9-point function can be run on a time shorter than 1.0 sec. This would imply that the 9-point function
+is actually more efficent.
+
+V2: CPU vs GPU runs
+Below are the runs that we tried to compare execution time of CPU and GPU
+threads	n_points	CPU_execution(s)	GPU_Computation(s)	GPU_execution(s)
+8	    16	        0.000462	        0.001223968	        1.441403
+8	    32	        0.007845	        0.002183616	        0.690737
+8	    64	        0.033385	        0.002295488	        0.674416
+8	    128	        0.27248		        0.005320512	        0.707665
+8	    256	        2.19432		        0.018125919	        0.706076
+8	    512	        19.84483	        0.111119263	        0.807753
+8	    1024	    164.969512	        0.720991272	        1.477575
+16	    1024	    164.816104	        0.710381104	        1.434322
+64	    1024	    164.998935	        0.21864151	        0.947318
+256	    1024	    165.106296	        0.203532379	        0.939904
+
+For thread size  8 per block and grid sizes till 128 * 128 , the CPU execution time is many times over the GPU execution time. 
+However, a drastic change is observed as grid size is increased. With increasing grid size there is exponential increase in the CPU execution time while
+the GPU execution time increases marginally. On further increasing the threads per block we observed the GPU time decreasing further. This clearly demonstated the 
+efficiency of GPUs over CPUs in tasks same type of computation has to be done multiple times and can be done parallely.
+
+We tried with increasing grid sizes from 16 till 1024 in multiple of 16, and threads from as low as 1 to 100,000. The GPU scaled really well for this much 
+threads and grid sizes. However, using GPU was not justified over CPU for small grid sizes( <=128).
+
+
+cudaEventXXX() vs gettimeofday() APIs :
+The CUDA event API includes calls to create and destroy events, record events, and compute the elapsed time in milliseconds between two recorded events.
+CUDA events make use of the concept of CUDA streams. A CUDA stream is simply a sequence of operations that are performed in order on the device.
+CUDA events use the GPU timer and therefore avoid the problems associated with host-device synchronization. CUDA events can also be used to determine
+the data transfer rate between host and device, by recording events on either side of the cudaMemcpy() calls.
+
+The gettimeofday() function gets the system’s clock time. The current time is expressed in elapsed seconds and microseconds since 00:00:00, January 1, 1970.
+gettimeofday() is preferable when timing on CPUs and cudaEventXXX() is preferable for GPU. Other parallel computing platforms will have their own version of
+timing using events similar to cudaEventXXX().
+
+Integrating CUDA and MPI:
+While Integrating CUDA code with MPI we had to synchronize sends and receives and in such a way that the continuity in the north-south direction is maintained.
+We achieved that using specific tags for each send and receives so that the parts should communicate only with the ones required to. One way we dealt with this
+issue was using the fork-join method where between kernel executions we would have serial code that communicated between nodes. Cuda-MPI integration required
+the device buffers to be synced back to the host after every iteration in order to communicate them to
+other hosts. The communicated data would then have to be synced back into the GPU.
+If we were using a CUDA-aware MPI implementation, this per-loop sync wouldn't be needed, as the GPU
+buffers would be able to be sent/received without first staging them in a host buffer. This could lead to
+some performance improvements.
